@@ -1,13 +1,12 @@
 import React from "react";
 import Navbar from "./components/Navbar";
 import "./globals.css";
-import { Inter, Inconsolata } from "next/font/google";
+import { Inconsolata } from "next/font/google";
 import type { Metadata } from "next";
 
-const inter = Inter({ subsets: ["latin"] });
 const inconsolata = Inconsolata({ subsets: ["latin"] });
 
-export const metaData: Metadata = {
+export const metadata: Metadata = {
 	title: "nextjs",
 	description: "a completer tutorial",
 	keywords: "nextjs",

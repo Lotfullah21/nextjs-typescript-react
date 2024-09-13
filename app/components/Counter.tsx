@@ -1,8 +1,7 @@
 "use client";
-
 import { useState } from "react";
 
-const counter = () => {
+const Counter = () => {
 	const [count, setCounter] = useState<number>(0);
 	return (
 		<div className="flex flex-col items-center">
@@ -15,4 +14,4 @@ const counter = () => {
 		</div>
 	);
 };
-export default counter;
+export default Counter;

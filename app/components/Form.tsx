@@ -1,6 +1,5 @@
 "use client";
 import { createUser } from "../utils/actions";
-import { useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 function SubmitBtn() {
@@ -14,22 +13,11 @@ function SubmitBtn() {
 
 function Form() {
 	const [message, formAction] = useFormState(createUser, null);
-	const formRef = useRef<HTMLFormElement>(null);
 
 	return (
 		<div className="grid justify-center items-center">
 			{message && <p>{message}</p>}
-			<form
-				ref={formRef}
-				action={async (formData) => {
-					// Call server-side action to create the user
-					formAction(formData);
-					// Optional: Reset form fields after submission
-					if (formRef.current) {
-						formRef.current.reset();
-					}
-				}}
-				className={formStyle}>
+			<form action={formAction} className={formStyle}>
 				<h1 className="text-4xl">Create a user</h1>
 				<input
 					type="text"

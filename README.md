@@ -469,7 +469,242 @@ It takes two arguments, `useFormState(fn, init)`,
 message: A state variable that holds any messages related to the form submission, such as success or error messages.
 formAction: A function to handle form submission. This function is typically used as the action handler for the form.
 
+```tsx
+export const createUser = async (
+	prevState: "user created successfully" | "failed to create a user" | null,
+	formData: FormData
+): Promise<"user created successfully" | "failed to create a user"> => {
+	"use server";
+	await new Promise((resolve) => setTimeout(resolve, 3000));
+
+	const firstName = formData.get("firstName")?.toString() || "";
+	const lastName = formData.get("lastName")?.toString() || "";
+
+	const newUser: User = { firstName, lastName, id: Date.now().toString() };
+
+	try {
+		await saveUser(newUser);
+		revalidatePath("/actions");
+		return "user created successfully";
+	} catch (error) {
+		console.log(error);
+		return "failed to create a user";
+	}
+};
+```
+
+```tsx
+function Form() {
+	const [message, formAction] = useFormState(createUser, null);
+```
+
+## Crucial
+
+Even though in `useFormState(createUser, null);`, we passed as null, but prevState can be "user created successfully" | "failed to create a user" | null, so add them in actions prev type.
+
+prevState: Now it accepts a value of type "user created successfully" | "failed to create a user" | null as expected by useFormState. It tracks the result of the previous action call.
+Return Type: The function clearly returns either "user created successfully" or "failed to create a user", as per the expected state management.
+
 ### Form Submission:
 
 When the form is submitted, the action function is called. This function uses formAction to handle the actual submission of the form data (via createUser).
 After calling formAction, the form is reset using formRef.current.reset().
+
+## Why Use JSON.stringify?
+
+Data Format: writeFile expects a string, but updateUsers is an array of objects. JSON.stringify(updateUsers) converts the array to a JSON-formatted string, which is a suitable format for storage in a file.
+Consistency: Ensures that the data is written in a format that can be read and parsed back into a JavaScript object with JSON.parse.
+
+### Passing params from component to server
+
+We can pass the params from components to the server, but the problem here is that even though we made as hidden, but still it would be visible in console.
+
+```tsx
+import { deleteUser, removeUser } from "../utils/actions";
+function DeleteButton({ id }: { id: string }) {
+	return (
+		<form action={deleteUser}>
+			<input type="hidden" name="id" value={id}></input>
+			<button
+				type="submit"
+				className="bg-red-500 text-white text-xs rounded p-2 ">
+				delete
+			</button>
+		</form>
+	);
+}
+export default DeleteButton;
+```
+
+### Passing params from component to server
+
+The DeleteButton component is designed to trigger the deletion of a user when clicked. Here’s a breakdown of how it works and a few suggestions for improvement:
+
+```tsx
+const removeUserWithId = removeUser.bind(null, id);
+```
+
+removeUser.bind(null, id) creates a new function (removeUserWithId) where id is automatically passed as the first argument to removeUser. null is used as the this context, which is not needed here.
+
+## Route Handlers
+
+In Next.js, route handlers are essential for managing requests and responses in your application. They allow you to define server-side logic and handle different HTTP methods (GET, POST, PUT, DELETE, etc.) for specific routes.
+
+With Next.js 13 and later versions, the introduction of the App Router provides a new way to handle routes and API endpoints using the filesystem-based routing and the app directory. Here’s an overview of how to use route handlers in Next.js, including both traditional API routes and the newer App Router approach:
+
+Traditional API Routes
+In Next.js, traditional API routes are placed inside the pages/api directory. Each file in this directory corresponds to an endpoint, and you can define request handlers using a default export.
+
+```text
+pages/
+  api/
+    user.js
+
+```
+
+### App Router (Next.js 13+)
+
+With the App Router introduced in Next.js 13, you handle routes using the new app directory. This approach integrates API routes directly into the routing structure, using files such as page.tsx, layout.tsx, and route.ts.
+
+Create a route file in the app directory. For example
+
+```text
+app/
+  api/
+    user/
+      route.ts
+
+```
+
+In app/api/user/route.ts, you can define your request handlers using async functions
+
+### Traditional API Routes:
+
+Defined in pages/api with default exports. Suitable for many Next.js projects and legacy applications.
+
+### App Router (Next.js 13+):
+
+Defined in the app directory using route.ts or route.js. Offers a more integrated and modern way to manage routes and API endpoints.
+
+```ts
+export async function GET(request: Request) {
+	return new Response(JSON.stringify({ message: "GET request received" }), {
+		status: 200,
+		headers: { "Content-Type": "application/json" },
+	});
+}
+
+export async function POST(request: Request) {
+	return new Response(JSON.stringify({ message: "POST request received" }), {
+		status: 201,
+		headers: { "Content-Type": "application/json" },
+	});
+}
+```
+
+### Request:
+
+# GET
+
+The request object, which provides information about the incoming request and by default we are having access to it.
+
+### Response:
+
+The response object, which allows you to create a new response to send back to the client.
+
+```ts
+import { fetchUsers, saveUser } from "@/app/utils/actions";
+
+export const GET = async (request: Request) => {
+	const { searchParams } = new URL(request.url);
+	const id = searchParams.get("id");
+	console.log(id);
+	const users = await fetchUsers();
+	return Response.json({ users });
+};
+```
+
+### NextRequest, NextResponse
+
+almost same as request and response, but they are coming from next.js with more methods.
+
+```tsx
+import { fetchUsers, saveUser } from "@/app/utils/actions";
+import { NextRequest, NextResponse } from "next/server";
+
+export const GET = async (request: NextRequest) => {
+	console.log(request.url);
+	const id = request.nextUrl.searchParams.get("id");
+	console.log(id);
+	const users = await fetchUsers();
+	// for redirect, the absolute path should be specified.
+	return NextResponse.redirect(new URL("/", request.url));
+};
+```
+
+# Post
+
+with this kind of request, we do expect some kind of data to be submitted from the user.
+
+```ts
+export const POST = async (request: Request) => {
+	const user = await request.json();
+};
+```
+
+using `request.json()`, we can have access to the data submitted through post method.
+
+```tsx
+export const POST = async (request: Request) => {
+	const user = await request.json();
+	const newUser = { ...user, id: Date.now().toString() };
+	await saveUser(newUser);
+	return Response.json({ msg: "user created" });
+};
+```
+
+## Middleware
+
+It allows to do something before completion of the request and change the request.
+
+- create middleware.ts in the root
+- by default it will invoked for every route in our project.
+
+```tsx
+export default function king() {
+	console.log("Hello from middleware");
+}
+```
+
+The code inside middleware.ts will be invoked before every single request.
+
+We can define matcher to target specific route for the middleware function.
+
+```ts
+export default function king() {
+	console.log("Hello from middleware");
+	return Response.json({ msg: "Hello from middleware" });
+}
+
+export const config = {
+	matcher: "/middle",
+};
+```
+
+We will get the above response only when we visit `/middle` route.
+
+### A simple authentication
+
+```tsx
+import { NextResponse } from "next/server";
+
+export default function king(request: Request) {
+	// request.url is the absolute path we are currently and from there we want to go to "/"
+	return NextResponse.redirect(new URL("/", request.url));
+}
+
+export const config = {
+	// It will be called for all the routes inside about and tours.
+	matcher: ["/about/:path*", "/tours/:path*"],
+};
+```

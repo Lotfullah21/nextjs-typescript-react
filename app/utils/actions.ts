@@ -1,7 +1,7 @@
 "use server";
+
 import { readFile, writeFile } from "fs/promises";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 type User = {
 	id: string;
@@ -9,11 +9,15 @@ type User = {
 	lastName: string;
 };
 
-export const createUser = async (prevState: any, formData: FormData) => {
+export const createUser = async (
+	prevState: "user created successfully" | "failed to create a user" | null,
+	formData: FormData
+): Promise<"user created successfully" | "failed to create a user"> => {
 	"use server";
 	await new Promise((resolve) => setTimeout(resolve, 3000));
-	const firstName = formData.get("firstName") as string;
-	const lastName = formData.get("lastName") as string;
+	const firstName = formData.get("firstName")?.toString() || "";
+	const lastName = formData.get("lastName")?.toString() || "";
+
 	const newUser: User = { firstName, lastName, id: Date.now().toString() };
 
 	try {
@@ -24,8 +28,6 @@ export const createUser = async (prevState: any, formData: FormData) => {
 		console.log(error);
 		return "failed to create a user";
 	}
-
-	// redirect("/");
 };
 
 export const fetchUsers = async (): Promise<User[]> => {
@@ -34,8 +36,25 @@ export const fetchUsers = async (): Promise<User[]> => {
 	return users;
 };
 
-const saveUser = async (user: User) => {
+export const saveUser = async (user: User) => {
 	const users = await fetchUsers(); // 'users' is a local variable
 	users.push(user); // modifying the local 'users' array
 	await writeFile("users.json", JSON.stringify(users)); // writing the updated 'users' array to a file
+};
+
+export const deleteUser = async (formData: FormData) => {
+	const id = formData.get("id");
+	const users = await fetchUsers();
+	const updateUsers = users.filter((user) => user.id !== id);
+	// Convert the updated updateUsers array to a JSON string and writes it back to users.json.
+	await writeFile("users.json", JSON.stringify(updateUsers));
+	revalidatePath("/actions");
+};
+
+export const removeUser = async (id: string) => {
+	const users = await fetchUsers();
+	const updateUsers = users.filter((user) => user.id !== id);
+	// Convert the updated updateUsers array to a JSON string and writes it back to users.json.
+	await writeFile("users.json", JSON.stringify(updateUsers));
+	revalidatePath("/actions");
 };
