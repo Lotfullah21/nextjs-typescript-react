@@ -1,13 +1,11 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
+## Create an app
 
 ```bash
 npx create-next-app@latest my-next-app
 
 ```
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Link
 
@@ -15,11 +13,9 @@ It allows us to navigate to different pages.
 
 ```tsx
 import Link from "next/link";
-
 const page = () => {
 	return (
 		<div>
-			<h1 className="text-8xl">Home page</h1>
 			<Link href="/about" className="m-8 text-red-900 inline-block text-xl">
 				about page
 			</Link>
@@ -35,10 +31,9 @@ To have a different nested routes, we have to create nested folders and inside e
 
 ## Layout
 
-It is a component that we place the part of the page that is shared across the pages.
 when creating layout, it should be name `layout.tsx`.
 We wrap the other part of the pages which are having the same layout into layout component.
-`template`: one of the difference between layout and template is as navigate through different pages, we are not re-rendering the layout.
+`template.tsx`: one of the difference between layout and template is as we navigate through different pages, we are not re-rendering the layout.
 
 ## Network Boundary
 
@@ -62,7 +57,8 @@ Each chunk is rendered in two steps:
 
 React renders Server Components into a special data format called the React Server Component Payload (RSC Payload).
 Next.js uses the RSC Payload and Client Component JavaScript instructions to render HTML on the server.
-Then, on the client:
+
+### Then, on the client:
 
 The HTML is used to immediately show a fast non-interactive preview of the route - this is for the initial page load only.
 The React Server Components Payload is used to reconcile the Client and Server Component trees, and update the DOM.
@@ -88,9 +84,49 @@ To use Client Components, you can add the React `use client` directive at the to
 
 ## Nested Client component inside server component
 
-There are more benefits in server components, but do we have to have a separate page for each client component at the cost of loosing server component's benefits? No
+There are more benefits in server components, but do we have to have a separate page for each client component at the cost of loosing server component's benefits? No!
 We can nest client component inside a server component, how?
 Create a component, add all the client code in that file and import it into the relative page and use it there.
+
+For instance, a counter component is required,
+
+```tsx
+component / Counter.tsx;
+
+("use client");
+import { useState } from "react";
+const Counter = () => {
+	const [count, setCounter] = useState<number>(0);
+	return (
+		<div className="flex flex-col items-center">
+			<p className="text-5xl font-bold">{count}</p>
+			<button
+				className="bg-red-900 text-white px-4 py-2 rounded tracking-wider mt-4"
+				onClick={() => setCounter(count + 1)}>
+				Increment
+			</button>
+		</div>
+	);
+};
+export default Counter;
+```
+
+Then import the component in server component.
+
+```tsx
+counter / page.tsx;
+
+import Counter from "../components/Counter";
+const CounterPage = () => {
+	return (
+		<section>
+			<h1 className="text-5xl mb-16"> Counter page</h1>
+			<Counter></Counter>
+		</section>
+	);
+};
+export default CounterPage;
+```
 
 ## Fetch
 
@@ -116,6 +152,8 @@ const tours = async () => {
 export default tours;
 ```
 
+#### Note
+
 We cannot use `async` with client components.
 
 Next.js is just awesome with caching, a giant caching machine.
@@ -125,7 +163,7 @@ Next.js is just awesome with caching, a giant caching machine.
 If there is an error or time consuming operation, we can use `loading.tsx` and `error.tsx` to handle these cases.
 the namings should exactly match.
 
-if we place them in app directory, it will be applied to all pages and if we place them in specific directories, then they will applied to those pages only.
+If we place them in app directory, it will be applied to all pages and if we place them in a specific directory, then, they will applied to those pages only.
 
 ## Nested Layouts
 
@@ -147,11 +185,78 @@ function layout({ children }: { children: React.ReactNode }) {
 export default layout;
 ```
 
-Here, `children` represents what ever files we have inside the directory that `layout.tsx` is located.
+```tsx
+<header className="py-2 w-1/2 bg-slate-500 rounded">
+	<h1 className="text-4xl text-white text-center">Nested layout</h1>
+</header>
+```
 
-If we are having a dynamic route and based on that some params, we want to navigate to different routes, we need to create a folder with the param we want to access `[id]` and inside that folder set a page.
+Now, the header will be shared across all the pages/components present inside the directory.
+
+Here, `children` represents what ever files(routes or pages) we have inside the directory the `layout.tsx` is located.
+
+## Dynamic routing
+
+If we are having a dynamic route and based on some params, we want to navigate to different routes, we need to create a folder with the param we want to access `[id]` and inside that folder set a page.
 
 To navigate to that dynamic route, we can use `Link` component.
+
+Let's say we are having a courses page and inside that page we are having different courses with different id, how to navigate to each course.
+
+- Create courses folder
+- create a page.tsx file
+- create a folder named `[id]`
+- inside `page.tsx` use the `Link` component and reference the each of the course
+
+```tsx
+courses / page.tsx;
+
+const courses = async () => {
+	const data = await fetchTours();
+	return (
+		<section>
+			<div className="grid md:grid-cols-2 gap-8">
+				{data.map((course) => {
+					return (
+						<Link
+							key={course.id}
+							href={`/courses/${course.id}`}
+							className=" text-blue-800 underline hover:text-red-900">
+							<h1 className="text-2xl">{course.name}</h1>
+						</Link>
+					);
+				})}
+			</div>
+		</section>
+	);
+};
+```
+
+```tsx
+[id] / page.tsx;
+
+import coffeImg from "@/images/coffee.jpg";
+import Image from "next/image";
+
+function page({ params }: { params: { id: string } }) {
+	return (
+		<div>
+			<h1 className="text-5xl mt-4">{params.id}</h1>
+			<div>
+				<Image
+					src={coffeImg}
+					alt="coffee "
+					width={208}
+					height={208}
+					priority
+					className="w-52 h-52 object-cover rounded"></Image>
+				<h1>local image</h1>
+			</div>
+		</div>
+	);
+}
+export default page;
+```
 
 ## <Image>
 
@@ -206,17 +311,18 @@ export default function Page() {
 
 It is crucial to put the image inside a div and set the following classes `relative h-56`
 
-#### Some key properties
+### Some key properties
 
-### fill
+#### fill
 
 This is a property used in Next.js's <Image> component that allows the image to automatically fill the parent container, making the image responsive. It stretches the image to cover the width and height of the container, maintaining its aspect ratio. When you use fill, the parent element must have a set position and dimensions (e.g., relative with defined width and height).
+once this property is added, we cannot add height or width to the image.
 
-### priority
+#### priority
 
 This flag indicates that the image should be prioritized for loading. It’s particularly useful for critical images, such as hero banners or above-the-fold content, where loading speed is essential for a good user experience.
 
-### sizes="100vws"
+#### sizes="100vws"
 
 The sizes attribute tells the browser how large the image will be on different screen sizes. The value 100vws means the image should take up 100% of the viewport's width (essentially full width). This helps optimize the image loading process by allowing the browser to load the correct image size based on the available space.
 
@@ -224,22 +330,22 @@ The fill property makes the image responsive to its parent container, and priori
 
 ## Complex routing
 
-whatever folder we put in app directory, that will become part of url.
+whatever folder we put in app directory, that will become part of url or segment of url.
 
 What if we don't want some folder to be part of our url segment? Add it to private folder? place \_ in front of the folder.
 
 - Private Folder
   \_folder
 
-Lets say we want to place our contents folder, go to app and create a folder `_contents`.
+Lets say we don't want contents folder to be part of the segment, go to app and create a folder `_contents`, now `domain/contents` cannot be accessed.
 
-#### Grouping the routes
+### Grouping the routes
 
-What if we want to group all the routes, for instance if we have a dashboard and in it we have profile, info, about. It would be tedious to have `dashboard/profile`, `dashboard/about` and so on.
+What if we want to group all the routes, for instance if we have a dashboard and inside the folder we have profile, info, about. It would be tedious to have `dashboard/profile`, `dashboard/about` and so on.
 
-using next, set the folder name with `()`.
+using next, set the folder name with `(foldername)`.
 
-(dashboard)
+`(dashboard)`
 
 - auth
 - profile
@@ -332,7 +438,16 @@ const buttonStyle = `bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 
 export default Form;
 ```
 
-## Backend development
+# Backend development
+
+```tsx
+import { readFile, writeFile } from "fs/promises";
+export const fetchUsers = async (): Promise<User[]> => {
+	const result = await readFile("users.json", { encoding: "utf8" });
+	const users = result ? JSON.parse(result) : [];
+	return users;
+};
+```
 
 ```tsx
 const saveUser = async (user: User) => {
@@ -369,12 +484,6 @@ export const createUser = async (formData: FormData) => {
 	}
 
 	// redirect("/");
-};
-
-export const fetchUsers = async (): Promise<User[]> => {
-	const result = await readFile("users.json", { encoding: "utf8" });
-	const users = result ? JSON.parse(result) : [];
-	return users;
 };
 
 const saveUser = async (user: User) => {
@@ -438,9 +547,15 @@ export const createUser = async (formData: FormData) => {
 };
 ```
 
+### redirect
+
+```tsx
+redirect("/");
+```
+
 ## useFormStatus
 
-It gives information about status of our action, one of htem
+It gives information about status of our action, one of them.
 
 useFormState and useFormStatus are hooks from the react-dom library. These hooks provide useful information about the current state of a form (e.g., whether it's pending submission or already submitted).
 
@@ -459,7 +574,8 @@ interface FormStatusNotPending {
 
 #### Arguments
 
-It takes two arguments, `useFormState(fn, init)`,
+It takes two arguments, `useFormState(fn, init)`
+
 `fn`: is a function to be called when the form is submitted or the button is pressed.
 
 `init` is the initial state of our form we want to be.
@@ -586,25 +702,11 @@ Defined in pages/api with default exports. Suitable for many Next.js projects an
 
 Defined in the app directory using route.ts or route.js. Offers a more integrated and modern way to manage routes and API endpoints.
 
-```ts
-export async function GET(request: Request) {
-	return new Response(JSON.stringify({ message: "GET request received" }), {
-		status: 200,
-		headers: { "Content-Type": "application/json" },
-	});
-}
-
-export async function POST(request: Request) {
-	return new Response(JSON.stringify({ message: "POST request received" }), {
-		status: 201,
-		headers: { "Content-Type": "application/json" },
-	});
-}
-```
-
 ### Request:
 
 # GET
+
+### Request
 
 The request object, which provides information about the incoming request and by default we are having access to it.
 
