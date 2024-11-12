@@ -1,15 +1,13 @@
-import React from "react";
-import Navbar from "./components/Navbar";
 import "./globals.css";
-import { Inconsolata } from "next/font/google";
+import Navbar from "../components/Navbar";
+import { Inter } from "next/font/google";
 import type { Metadata } from "next";
-
-const inconsolata = Inconsolata({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "nextjs",
-	description: "a completer tutorial",
-	keywords: "nextjs",
+	title: "Hooshmanlab project",
+	description: "A Next.js project implemented in ts, tailwind",
+	keywords: "Next.js Typescript, TailwindCSS",
 };
 
 export default function RootLayout({
@@ -18,10 +16,10 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html>
-			<body className={inconsolata.className}>
+		<html lang="en">
+			<body className={inter.className}>
 				<Navbar></Navbar>
-				<main className="max-w-7xl mx-auto"> {children}</main>
+				<main className="mx-auto max-w-3xl px-2">{children}</main>
 			</body>
 		</html>
 	);

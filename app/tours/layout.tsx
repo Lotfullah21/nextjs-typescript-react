@@ -1,13 +1,13 @@
 import React from "react";
 
-function layout({ children }: { children: React.ReactNode }) {
+const layout = ({ children }: { children: React.ReactNode }) => {
 	return (
-		<div>
-			<header className="py-2 w-1/2 bg-slate-500 rounded">
-				<h1 className="text-4xl text-white text-center">Nested layout</h1>
-			</header>
+		<section>
+			<div className="w-1/2 p-4 bg-gray-800 rounded m-4">
+				<h1 className="text-4xl text-white">Nested Layout</h1>
+			</div>
 			{children}
-		</div>
+		</section>
 	);
-}
+};
 export default layout;

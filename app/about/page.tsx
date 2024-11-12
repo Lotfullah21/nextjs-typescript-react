@@ -1,8 +1,8 @@
-const AboutPage = () => {
+const about = () => {
 	return (
 		<div>
-			<h1 className="text-8xl">About page</h1>
+			<h1 className="text-8xl">about page</h1>
 		</div>
 	);
 };
-export default AboutPage;
+export default about;

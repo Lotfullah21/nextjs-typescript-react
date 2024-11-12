@@ -1,36 +1,36 @@
-import coffeImg from "@/images/coffee.jpg";
 import Image from "next/image";
+import coffee from "@/images/coffee.jpg";
+const url =
+	"https://images.pexels.com/photos/28988215/pexels-photo-28988215/free-photo-of-surfer-at-sunset-on-ipanema-beach-rio-de-janeiro.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
 
-const url = "https://www.course-api.com/images/tours/tour-5.jpeg";
-function page({ params }: { params: { id: string } }) {
+const page = ({ params }: { params: { id: string } }) => {
 	return (
 		<div>
-			<h1 className="text-5xl mt-4">{params.id}</h1>
-			<section className="flex gap-x-4 mt-4">
+			<h1 className="text-4xl">Id: {params.id}</h1>
+			<section className="flex gap-x-4">
 				{/* local image */}
 				<div>
 					<Image
-						src={coffeImg}
-						alt="coffee "
-						width={208}
-						height={208}
+						src={coffee}
+						width={400}
+						height={400}
+						alt="coffee"
 						priority
-						className="w-52 h-52 object-cover rounded"></Image>
-					<h1>local image</h1>
+						className="h-68 w-68 rounded object-cover"></Image>
+					<h1>black coffee</h1>
 				</div>
+				{/* remote */}
 				<div>
 					<Image
 						src={url}
-						width={208}
-						height={208}
-						priority
-						alt="coffee"
-						className="w-52 h-52 object-cover rounded"></Image>
-					<h2>remote image</h2>
+						alt="beach image"
+						width={400}
+						height={400}
+						className="h-68 w-68 rounded object-cover"></Image>
+					<h1>beach</h1>
 				</div>
-				{/* remote image */}
 			</section>
 		</div>
 	);
-}
+};
 export default page;

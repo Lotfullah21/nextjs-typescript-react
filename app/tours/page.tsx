@@ -4,45 +4,45 @@ const url = "https://www.course-api.com/react-tours-project";
 
 type Tour = {
 	id: string;
-	image: string;
-	name: string;
 	info: string;
+	name: string;
+	image: string;
+	price: string;
 };
 
 const fetchTours = async () => {
-	await new Promise((resolve) => setTimeout(resolve, 1000));
+	await new Promise((resolve) => setTimeout(resolve, 3000));
 	const response = await fetch(url);
-	const data: Tour[] = await response.json();
-	return data;
+	const tours: Tour[] = await response.json();
+	return tours;
 };
 
-const tours = async () => {
-	const data = await fetchTours();
-	console.log(data);
+async function fetchData() {
+	const tours = await fetchTours();
 	return (
-		<section>
-			<div className="grid md:grid-cols-2 gap-8">
-				{data.map((tour) => {
-					return (
-						<Link
-							key={tour.id}
-							href={`/tours/${tour.id}`}
-							className="mt-4 block  text-blue-800 underline hover:text-red-900">
-							<div className="relative h-60 mb-4">
-								<Image
-									src={tour.image}
-									alt={tour.name}
-									fill
-									priority
-									sizes="100vws"
-									className="object-cover rounded"></Image>
-							</div>
-							<h1 className="text-2xl">{tour.name}</h1>
-						</Link>
-					);
-				})}
-			</div>
+		<section className="grid md:grid-cols-2 gap-8">
+			{tours.map((tour) => {
+				return (
+					<Link
+						className="p-4 text-gray-800 hover:text-red-700"
+						key={tour.id}
+						href={`/tours/${tour.id}`}>
+						<p className="text-3xl">{tour.name}</p>
+						<div className="relative h-48">
+							<Image
+								src={tour.image}
+								alt={tour.name}
+								fill
+								priority
+								sizes="(max-width:768px) 100vw, (max-width:1200px) 60vw"
+								className="object-cover rounded"></Image>
+						</div>
+						<p className="text-gray-900 text-2xl">Price: {tour.price}$</p>
+					</Link>
+				);
+			})}
 		</section>
 	);
-};
-export default tours;
+}
+
+export default fetchData;

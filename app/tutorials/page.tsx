@@ -1,7 +1,7 @@
 const page = () => {
 	return (
 		<div>
-			<h1>python</h1>
+			<h1 className="text-3xl">Tutorials</h1>
 		</div>
 	);
 };

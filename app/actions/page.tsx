@@ -1,11 +1,12 @@
-import Form from "../components/Form";
-import UserList from "../components/UserList";
-const Actions = () => {
+import Form from "@/components/Form";
+import UserList from "@/components/UserList";
+
+const ActionsPage = () => {
 	return (
-		<div>
+		<section>
 			<Form></Form>
 			<UserList></UserList>
-		</div>
+		</section>
 	);
 };
-export default Actions;
+export default ActionsPage;

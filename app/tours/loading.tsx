@@ -1,6 +1,6 @@
 "use client";
 
-function loading() {
-	return <span className="text-xl capitalize">loading ...</span>;
-}
+const loading = () => {
+	return <h2 className="text-center text-5xl">Loading tours...</h2>;
+};
 export default loading;
