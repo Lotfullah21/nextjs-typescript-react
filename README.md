@@ -36,21 +36,22 @@ This will start the application on http://localhost:3000.
 
 ### Tutorials
 
-1. [Backend Logic](./docs/BACKEND-LOGIC.md): Overview of the backend integration in the project.
-2. [Components](./docs/COMPONENTS.md): Guide to building and using reusable components.
-3. [Delete Button](./docs/DELETE-BUTTON.md): Instructions for implementing a delete button with confirmation.
-4. [Dynamic Routing](./docs/DYNAMIC-ROUTING.md): Explanation of dynamic routing in Next.js.
-5. [Fetch Data](./docs/FETCH-DATA.md): How to fetch and display data from an API.
-6. [Form Status](./docs/FORM-STATUS.md): Managing form states such as loading, success, and error.
-7. [Forms](./docs/FORMS.md): Creating and handling forms in React.
-8. [Image](./docs/IMAGE.md): Guide to handling images in the project.
-9. [Layout](./docs/LAYOUT.md): Managing layouts and page structure in the application.
-10. [Loading](./docs/LOADING.md): Implementing loading states for asynchronous actions.
-11. [Middleware](./docs/MIDDLEWARE.md): Custom middleware functions for enhanced routing or API security.
-12. [Page](./docs/PAGE.md): Guide on creating and structuring pages in Next.js.
-13. [Revalidate](./docs/REVALIDATE.md): Explanation of data revalidation for server-side rendered pages.
-14. [Route Handlers](./docs/ROUTE-HANDLERS.md): Setting up route handlers for API endpoints.
-15. [Routing](./docs/ROUTING.md): Basics of routing and navigation in Next.js.
+1. [Backend Logic](./docs/BACKEND-LOGIC.MD): Overview of the backend integration in the project.
+2. [Components](./docs/COMPONENTS.MD): Guide to building and using reusable components.
+3. [Delete Button](./docs/DELETE-BUTTON.MD): Instructions for implementing a delete button with confirmation.
+4. [Dynamic Routing](./docs/DYNAMIC-ROUTING.MD): Explanation of dynamic routing in Next.js.
+5. [Dynamic Routing](./docs/DYNAMIC-ROUTING.MD)
+6. [Fetch Data](./docs/FETCH-DATA.MD): How to fetch and display data from an API.
+7. [Form Status](./docs/FORM-STATUS.MD): Managing form states such as loading, success, and error.
+8. [Forms](./docs/FORMS.MD): Creating and handling forms in React.
+9. [Image](./docs/IMAGE.MD): Guide to handling images in the project.
+10. [Layout](./docs/LAYOUT.MD): Managing layouts and page structure in the application.
+11. [Loading](./docs/LOADING.MD): Implementing loading states for asynchronous actions.
+12. [Middleware](./docs/MIDDLEWARE.MD): Custom middleware functions for enhanced routing or API security.
+13. [Page](./docs/PAGE.MD): Guide on creating and structuring pages in Next.js.
+14. [Revalidate](./docs/REVALIDATE.MD): Explanation of data revalidation for server-side rendered pages.
+15. [Route Handlers](./docs/ROUTE-HANDLERS.MD): Setting up route handlers for API endpoints.
+16. [Routing](./docs/ROUTING.MD): Basics of routing and navigation in Next.js.
 
 ### Configuration Files
 
